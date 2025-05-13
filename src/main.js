@@ -18,6 +18,8 @@ const slots = {
 };
 const spinButton = document.querySelector('.spin-button');
 const text = document.querySelector('.text');
+const moneyDisplay = document.querySelector('.money-display-number');
+let money = parseFloat(moneyDisplay.textContent);
 
 const ranges = [];
 let totalWeight = 0;
@@ -37,9 +39,6 @@ function calcRanges() {
   });
 
   totalWeight = acc;
-
-  console.log(ranges);
-  console.log(totalWeight);
 }
 
 calcRanges();
@@ -47,6 +46,7 @@ calcRanges();
 spinButton.addEventListener('click', e => {
   spinButton.setAttribute('disabled', '');
   Object.keys(slots).forEach((slot, index) => {
+    money -= 1;
     setTimeout(() => {
       slots[slot].textContent = getRandomSymbol();
     }, 200 * index);
@@ -64,12 +64,66 @@ function setText() {
   const s3 = slots.slot3.textContent;
 
   if (s1 === s2 && s2 === s3) {
+    switch (s1) {
+      case '🪙':
+        money += 10;
+        break;
+      case '🍒':
+        money *= 1.1;
+        break;
+      case '🍋':
+        money *= 1.05;
+        break;
+      case '⭐':
+        money += 5;
+        break;
+      case '💵':
+        money += 100;
+        break;
+      case '7️⃣':
+        money *= 100;
+        break;
+      case '🔔':
+        money += 1;
+        break;
+    }
     text.textContent = 'You won!';
   } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+    let selectedSlot;
+    if (s2 === s3) {
+      selectedSlot = s2;
+    } else {
+      selectedSlot = s1;
+    }
+    switch (selectedSlot) {
+      case '🪙':
+        money += 5;
+        break;
+      case '🍒':
+        money *= 1.05;
+        break;
+      case '🍋':
+        money *= 1.025;
+        break;
+      case '⭐':
+        money += 2.5;
+        break;
+      case '💵':
+        money += 50;
+        break;
+      case '7️⃣':
+        money *= 50;
+        break;
+      case '🔔':
+        money += 0.5;
+        break;
+    }
     text.textContent = 'So close!';
   } else {
     text.textContent = 'Better luck next time!';
   }
+
+  moneyDisplay.textContent = money.toFixed(2);
 }
 
 function getRandomSymbol() {
