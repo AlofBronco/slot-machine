@@ -2,13 +2,13 @@ import { Random } from 'random-js';
 const random = new Random();
 
 const prizes = [
-  { symbol: '🪙', weight: 5 },
+  { symbol: '🪙', weight: 4 },
   { symbol: '🍒', weight: 4 },
-  { symbol: '🍋', weight: 6 },
+  { symbol: '🍋', weight: 5 },
   { symbol: '⭐', weight: 5 },
   { symbol: '💵', weight: 3 },
   { symbol: '7️⃣', weight: 1 },
-  { symbol: '🔔', weight: 7 },
+  { symbol: '🔔', weight: 6 },
 ];
 
 const slots = {
@@ -54,8 +54,23 @@ spinButton.addEventListener('click', e => {
 
   setTimeout(() => {
     spinButton.removeAttribute('disabled', '');
+    setText();
   }, 210 * 3);
 });
+
+function setText() {
+  const s1 = slots.slot1.textContent;
+  const s2 = slots.slot2.textContent;
+  const s3 = slots.slot3.textContent;
+
+  if (s1 === s2 && s2 === s3) {
+    text.textContent = 'You won!';
+  } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+    text.textContent = 'So close!';
+  } else {
+    text.textContent = 'Better luck next time!';
+  }
+}
 
 function getRandomSymbol() {
   const randomValue = random.integer(0, totalWeight - 1);
