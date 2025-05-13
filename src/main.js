@@ -52,11 +52,7 @@ spinButton.addEventListener('click', e => {
   spinButton.setAttribute('disabled', '');
   money -= 1;
   Object.keys(slots).forEach((slot, index) => {
-    const symbolChange = setInterval(() => {
-      slots[slot].textContent = getRandomSymbol();
-    }, 10);
     setTimeout(() => {
-      clearInterval(symbolChange);
       slots[slot].textContent = getRandomSymbol();
     }, 200 * index);
   });
