@@ -19,7 +19,8 @@ const slots = {
 const spinButton = document.querySelector('.spin-button');
 const text = document.querySelector('.text');
 const moneyDisplay = document.querySelector('.money-display-number');
-let money = parseFloat(moneyDisplay.textContent);
+let money = parseFloat(JSON.parse(localStorage.getItem('money'))) || 100.0;
+moneyDisplay.textContent = money.toFixed(2);
 
 const ranges = [];
 let totalWeight = 0;
@@ -44,10 +45,18 @@ function calcRanges() {
 calcRanges();
 
 spinButton.addEventListener('click', e => {
+  if (money < 1) {
+    text.textContent = 'Not enough money!';
+    return;
+  }
   spinButton.setAttribute('disabled', '');
+  money -= 1;
   Object.keys(slots).forEach((slot, index) => {
-    money -= 1;
+    const symbolChange = setInterval(() => {
+      slots[slot].textContent = getRandomSymbol();
+    }, 10);
     setTimeout(() => {
+      clearInterval(symbolChange);
       slots[slot].textContent = getRandomSymbol();
     }, 200 * index);
   });
@@ -81,7 +90,7 @@ function setText() {
         money += 100;
         break;
       case '7️⃣':
-        money *= 100;
+        money *= 10;
         break;
       case '🔔':
         money += 1;
@@ -112,7 +121,7 @@ function setText() {
         money += 50;
         break;
       case '7️⃣':
-        money *= 50;
+        money *= 5;
         break;
       case '🔔':
         money += 0.5;
@@ -123,6 +132,7 @@ function setText() {
     text.textContent = 'Better luck next time!';
   }
 
+  localStorage.setItem('money', JSON.stringify(money.toFixed(2)));
   moneyDisplay.textContent = money.toFixed(2);
 }
 
@@ -132,3 +142,12 @@ function getRandomSymbol() {
     elem => elem.start <= randomValue && elem.end >= randomValue
   ).symbol;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const shopButton = document.querySelector('.shop-button');
+  const shop = document.querySelector('.shop');
+
+  shopButton.addEventListener('click', () => {
+    shop.classList.toggle('open');
+  });
+});
