@@ -165,7 +165,8 @@ body {
   }
 }
 
-.money-display {
+.money-display,
+.number-of-spins {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -181,6 +182,11 @@ body {
   justify-content: center;
   gap: 20px;
   z-index: 15;
+}
+
+.number-of-spins {
+  top: 100px;
+  z-index: 1;
 }
 
 .shop-button {
@@ -244,7 +250,7 @@ body {
 }
 
 .shop-list {
-  margin-top: 30px;
+  margin-top: 90px;
   padding: 0;
   display: flex;
   flex-direction: column;

@@ -2,20 +2,25 @@ import { Random } from 'random-js';
 const random = new Random();
 
 const prizes = [
-  { symbol: '🪙', weight: 4 },
-  { symbol: '🍒', weight: 4 },
-  { symbol: '🍋', weight: 5 },
-  { symbol: '⭐', weight: 5 },
-  { symbol: '💵', weight: 3 },
+  { symbol: '🪙', weight: 3 },
+  { symbol: '🍒', weight: 3 },
+  { symbol: '🍋', weight: 3 },
+  { symbol: '⭐', weight: 2 },
+  { symbol: '💵', weight: 2 },
   { symbol: '7️⃣', weight: 1 },
-  { symbol: '🔔', weight: 6 },
+  { symbol: '🔔', weight: 3 },
 ];
+
+const numOfSpinsDisplay = document.querySelector('.number-of-spins');
+let numberOfSpins = JSON.parse(localStorage.getItem('numberOfSpins')) || 0;
+numOfSpinsDisplay.textContent = numberOfSpins;
 
 const slots = {
   slot1: document.querySelector('.slot1'),
   slot2: document.querySelector('.slot2'),
   slot3: document.querySelector('.slot3'),
 };
+
 const spinButton = document.querySelector('.spin-button');
 const text = document.querySelector('.text');
 const moneyDisplay = document.querySelector('.money-display-number');
@@ -45,10 +50,15 @@ function calcRanges() {
 calcRanges();
 
 spinButton.addEventListener('click', e => {
+  numberOfSpins++;
+  numOfSpinsDisplay.textContent = numberOfSpins;
+  localStorage.setItem('numberOfSpins', JSON.stringify(numberOfSpins));
+
   if (money < 1) {
     text.textContent = 'Not enough money!';
     return;
   }
+
   spinButton.setAttribute('disabled', '');
   money -= 1;
   Object.keys(slots).forEach((slot, index) => {
@@ -59,7 +69,23 @@ spinButton.addEventListener('click', e => {
 
   setTimeout(() => {
     spinButton.removeAttribute('disabled', '');
+    let lastMoney = money;
+
     setText();
+
+    let delta = money - lastMoney;
+    if (delta > 0) {
+      text.textContent += ` (+$${delta.toFixed(2)})`;
+    } else if (delta === 0) {
+      text.textContent += ` (No win)`;
+    } else {
+      text.textContent += ` (-$1.00 spin)`;
+    }
+
+    if (numberOfSpins % 10 === 0) {
+      text.textContent += '\n Bonus Spin! 🎁 +1';
+      money += 1;
+    }
   }, 210 * 3);
 });
 
@@ -71,60 +97,56 @@ function setText() {
   if (s1 === s2 && s2 === s3) {
     switch (s1) {
       case '🪙':
-        money += 10;
-        break;
-      case '🍒':
-        money *= 1.1;
-        break;
-      case '🍋':
-        money *= 1.05;
-        break;
-      case '⭐':
         money += 5;
         break;
+      case '🍒':
+        money += 3;
+        break;
+      case '🍋':
+        money += 2;
+        break;
+      case '⭐':
+        money += 4;
+        break;
       case '💵':
-        money += 100;
+        money += 25;
         break;
       case '7️⃣':
-        money *= 10;
+        money *= 3;
+        break;
+      case '🔔':
+        money += 3;
+        break;
+    }
+    text.textContent = 'You won!';
+  } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+    let selectedSlot = s2 === s3 ? s2 : s1;
+    switch (selectedSlot) {
+      case '🪙':
+        money += 2;
+        break;
+      case '🍒':
+        money += 1.5;
+        break;
+      case '🍋':
+        money += 1;
+        break;
+      case '⭐':
+        money += 2;
+        break;
+      case '💵':
+        money += 10;
+        break;
+      case '7️⃣':
+        money *= 1.5;
         break;
       case '🔔':
         money += 1;
         break;
     }
-    text.textContent = 'You won!';
-  } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-    let selectedSlot;
-    if (s2 === s3) {
-      selectedSlot = s2;
-    } else {
-      selectedSlot = s1;
-    }
-    switch (selectedSlot) {
-      case '🪙':
-        money += 5;
-        break;
-      case '🍒':
-        money *= 1.05;
-        break;
-      case '🍋':
-        money *= 1.025;
-        break;
-      case '⭐':
-        money += 2.5;
-        break;
-      case '💵':
-        money += 50;
-        break;
-      case '7️⃣':
-        money *= 5;
-        break;
-      case '🔔':
-        money += 0.5;
-        break;
-    }
     text.textContent = 'So close!';
   } else {
+    money += 0.2;
     text.textContent = 'Better luck next time!';
   }
 
