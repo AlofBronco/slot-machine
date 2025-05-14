@@ -1,6 +1,8 @@
 import { Random } from 'random-js';
 const random = new Random();
 
+import './js/shop';
+
 const prizes = [
   { symbol: '🪙', weight: 3 },
   { symbol: '🍒', weight: 3 },
@@ -73,21 +75,27 @@ spinButton.addEventListener('click', e => {
 
     setText();
 
-    let delta = money - lastMoney;
-    if (delta > 0) {
-      text.textContent += ` (+$${delta.toFixed(2)})`;
-    } else if (delta === 0) {
-      text.textContent += ` (No win)`;
-    } else {
-      text.textContent += ` (-$1.00 spin)`;
-    }
+    setMoneyText(lastMoney);
 
     if (numberOfSpins % 10 === 0) {
       text.textContent += '\n Bonus Spin! 🎁 +1';
-      money += 1;
+      setTimeout(() => {
+        spinButton.click();
+      }, 100);
     }
   }, 210 * 3);
 });
+
+function setMoneyText(lastMoney) {
+  let delta = money - lastMoney;
+  if (delta > 0) {
+    text.textContent += ` (+$${delta.toFixed(2)})`;
+  } else if (delta === 0) {
+    text.textContent += ` (No win)`;
+  } else {
+    text.textContent += ` (-$1.00 spin)`;
+  }
+}
 
 function setText() {
   const s1 = slots.slot1.textContent;
